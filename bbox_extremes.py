@@ -18,10 +18,11 @@ def check_bbox_extremes_for_min_pixel_value(bbox, min_pixel_value):
         min_y -= round(min_pixel_value - height) // 2
         max_y += round(min_pixel_value - height + 1) // 2
     out = [int(min_x), int(min_y), int(max_x), int(max_y)]
+    print(f'before change {out}')
     for i, x in enumerate(out):
         if x < 0:
             out[i] = 0
-
+    print(f'After {out}')
     return out
 
 
