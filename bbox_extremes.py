@@ -1,3 +1,4 @@
+## crop util functions
 def get_bbox_extreme_with_min_pixel_value(bboxes, min_pixel_value):
     bbox_extremes = get_bbox_extremes(bboxes)
     bbox_extremes_with_min_pixel_value = check_bbox_extremes_for_min_pixel_value(bbox_extremes, min_pixel_value)
@@ -44,21 +45,32 @@ def get_bbox_extremes(bboxes):
     return box
 
 
-def get_split_intervals(start, end, interval):
+
+def get_split_intervals(start, end, interval, image_width):
     """
     getting split points for an image, usually start will be equal to 0 and end
     will be the images width.
 
-    In our case we are starting where the bboxes start and endning where they end.
+    In our case we are starting where the bboxes start(bbox extreme xmin) and endning where they end(bbox extreme xmax).
     """
     # start is the minimum value
     # end is the width of the image gotten from our bbox extreme
 
     # if theres a remainder we subtract the last line
-    num_lines = (end // interval) - 1 if (end // interval) > 0 else 0
+    new_width = end-start
+    num_lines = (new_width // interval) - 1 if (new_width // interval) > 0 else 0
     # for the first value of start for our splits
-    intervals = [start]
 
+    if new_width < interval:
+      diff_width_interval = interval-new_width
+      start_diff =  start - diff_width_interval
+      end_diff = end+diff_width_interval
+      if start_diff > 0:
+        start=start_diff
+      elif end_diff < image_width:
+        end=end_diff
+
+    intervals = [start]
     # Draw vertical lines at every n number of pixels until step > end
     if num_lines > 0:
         x = interval + start
@@ -66,8 +78,9 @@ def get_split_intervals(start, end, interval):
             intervals.append(x)
             x += interval
             if x + interval > end:
-                break
+              continue
+
+
     # appending image with for the last split
     intervals.append(end)
-    print(f'intervals')
     return intervals
