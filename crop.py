@@ -31,6 +31,7 @@ def split_images_via_bbox_extremes_and_interval(dataset,
     for filename in filenames:
         #info from our dataset
         img = dataset.images[filename]
+        h,w,_ =img.shape
         ann = dataset.annotations[filename]
         class_ids = ann.class_id
         bboxes = ann.xyxy
@@ -41,7 +42,7 @@ def split_images_via_bbox_extremes_and_interval(dataset,
             ymin = 0
 
         # getting the coords for our vertical split for each image
-        split_intervals = get_split_intervals(xmin, xmax, interval)
+        split_intervals = get_split_intervals(xmin, w, interval)
         split_image = vertical_split_img_with_intervals(img=img,
                                                         bboxes=bboxes,
                                                         class_ids=class_ids,
